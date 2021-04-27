@@ -1,6 +1,6 @@
 variables:
   NUGET_PACKAGES: $CI_PROJECT_DIR/packages/
-  BUILD_IMAGE: eu.gcr.io/everybag-1273/dotnet/sdk-ci:5.0
+  BUILD_IMAGE: eu.gcr.io/everybag-1273/dotnet/sdk-ci:6.0
 
 stages:
   - build
@@ -30,7 +30,7 @@ Build:
       - nugets/
   script:
     - v2-autobuild
-    - v2-test-all
+    - v2-test-all net6.0
     - v2-publish-nuget src/Nyris.Extensions.AspNetCore.CacheControl
 
 Release NuGets:
