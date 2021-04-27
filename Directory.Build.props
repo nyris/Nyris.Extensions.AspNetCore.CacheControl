@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+    <PropertyGroup>
+        <RepositoryUrl>https://git.nyris.io/shared/extensions/Nyris.Extensions.AspNetCore.CacheControl.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageTags>Extensions;Cache-Control</PackageTags>
+        <PackageProjectUrl>https://git.nyris.io/shared/extensions/Nyris.Extensions.AspNetCore.CacheControl</PackageProjectUrl>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <LangVersion>8.0</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <!--
+        <NoWarn>$(NoWarn);...</NoWarn>
+        <WarningsNotAsErrors>$(WarningsNotAsErrors);...</WarningsNotAsErrors>
+        -->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SourceLink.Embed.AllSourceFiles" Version="2.8.3" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SonarAnalyzer" Version="6.6.0.3969" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+</Project>

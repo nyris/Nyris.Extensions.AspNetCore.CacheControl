@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E70D390C-B0F7-4BEF-BB8F-858DE8376342}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{977AE35B-28F9-4EEC-B6D7-D915193A7DA5}"
+ProjectSection(SolutionItems) = preProject
+	Directory.Build.props = Directory.Build.props
+	CHANGELOG.md = CHANGELOG.md
+	README.md = README.md
+	GitVersion.yml = GitVersion.yml
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".dotfiles", ".dotfiles", "{38B61A3E-B117-42E6-BA10-A64D01C54BD7}"
+ProjectSection(SolutionItems) = preProject
+	.gitignore = .gitignore
+	.gitlab-ci.yml = .gitlab-ci.yml
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0B4343B2-BE2F-4D07-9AD2-01F5C835575B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nyris.Extensions.AspNetCore.CacheControl", "src\Nyris.Extensions.AspNetCore.CacheControl\Nyris.Extensions.AspNetCore.CacheControl.csproj", "{1FCA5AF8-E82E-45AE-BBA5-7D7673C22706}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nyris.Extensions.AspNetCore.CacheControl.Tests", "test\Nyris.Extensions.AspNetCore.CacheControl.Tests\Nyris.Extensions.AspNetCore.CacheControl.Tests.csproj", "{8F2D484B-604C-449F-ABCC-B380B373E672}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FCA5AF8-E82E-45AE-BBA5-7D7673C22706}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FCA5AF8-E82E-45AE-BBA5-7D7673C22706}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FCA5AF8-E82E-45AE-BBA5-7D7673C22706}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FCA5AF8-E82E-45AE-BBA5-7D7673C22706}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F2D484B-604C-449F-ABCC-B380B373E672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F2D484B-604C-449F-ABCC-B380B373E672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F2D484B-604C-449F-ABCC-B380B373E672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F2D484B-604C-449F-ABCC-B380B373E672}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{38B61A3E-B117-42E6-BA10-A64D01C54BD7} = {977AE35B-28F9-4EEC-B6D7-D915193A7DA5}
+		{1FCA5AF8-E82E-45AE-BBA5-7D7673C22706} = {E70D390C-B0F7-4BEF-BB8F-858DE8376342}
+		{8F2D484B-604C-449F-ABCC-B380B373E672} = {0B4343B2-BE2F-4D07-9AD2-01F5C835575B}
+	EndGlobalSection
+EndGlobal
