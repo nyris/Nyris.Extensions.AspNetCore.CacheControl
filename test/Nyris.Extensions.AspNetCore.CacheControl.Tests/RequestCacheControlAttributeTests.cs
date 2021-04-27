@@ -36,7 +36,11 @@ namespace Nyris.Extensions.AspNetCore.CacheControl.Tests
             _context = new ActionExecutingContext(
                 actionContext,
                 metadata,
+#if NET6_0
+                new Dictionary<string, object?>(),
+#elif NET5_0
                 new Dictionary<string, object>(),
+#endif
                 new Mock<Controller>().Object);
 
             _next = () => Task.FromResult(new ActionExecutedContext(actionContext, metadata, controller));
@@ -164,7 +168,11 @@ namespace Nyris.Extensions.AspNetCore.CacheControl.Tests
                     modelState: new ModelStateDictionary()
                 ),
                 new List<IFilterMetadata>(),
+#if NET6_0
+                new Dictionary<string, object?>(),
+#elif NET5_0
                 new Dictionary<string, object>(),
+#endif
                 new Mock<Controller>().Object);
 
             // act
