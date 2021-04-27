@@ -37,6 +37,7 @@ Release NuGets:
   extends: .publish
   only:
     - master
+    - main
   script:
     - v2-push-nuget 'nugets/*.nupkg'
 
@@ -45,6 +46,7 @@ Unstable NuGets:
   when: manual
   except:
     - master
+    - main
     - tags
   script:
     - v2-push-nuget 'nugets/*.nupkg'
