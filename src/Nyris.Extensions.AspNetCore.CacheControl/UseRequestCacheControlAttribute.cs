@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
-using Nyris.Extensions.AspNetCore.Caching;
+using Nyris.Extensions.AspNetCore.CacheControl;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.AspNetCore.Mvc

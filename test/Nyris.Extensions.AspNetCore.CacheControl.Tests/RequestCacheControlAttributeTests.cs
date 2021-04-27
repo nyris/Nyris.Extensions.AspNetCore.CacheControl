@@ -12,7 +12,7 @@ using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
 
-namespace Nyris.Extensions.AspNetCore.Caching.Tests
+namespace Nyris.Extensions.AspNetCore.CacheControl.Tests
 {
     public sealed class RequestCacheControlAttributeTests
     {
