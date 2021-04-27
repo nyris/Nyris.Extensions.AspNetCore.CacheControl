@@ -1,6 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
-using Nyris.Extensions.AspNetCore.Caching;
+using Nyris.Extensions.AspNetCore.CacheControl;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.AspNetCore.Http

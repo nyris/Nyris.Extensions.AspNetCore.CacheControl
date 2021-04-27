@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nyris.Extensions.AspNetCore.Caching
+namespace Nyris.Extensions.AspNetCore.CacheControl
 {
     public interface IRequestCacheControl
     {
