@@ -12,189 +12,188 @@ using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
 
-namespace Nyris.Extensions.AspNetCore.CacheControl.Tests
+namespace Nyris.Extensions.AspNetCore.CacheControl.Tests;
+
+public sealed class RequestCacheControlAttributeTests
 {
-    public sealed class RequestCacheControlAttributeTests
+    private readonly ActionExecutingContext _context;
+    private readonly ActionExecutionDelegate _next;
+
+    public RequestCacheControlAttributeTests()
     {
-        private readonly ActionExecutingContext _context;
-        private readonly ActionExecutionDelegate _next;
+        var controller = new Mock<Controller>().Object;
+        var httpContext = new DefaultHttpContext();
 
-        public RequestCacheControlAttributeTests()
+        var actionContext = new ActionContext
         {
-            var controller = new Mock<Controller>().Object;
-            var httpContext = new DefaultHttpContext();
+            HttpContext = httpContext,
+            RouteData = new RouteData(),
+            ActionDescriptor = new ActionDescriptor(),
+        };
 
-            var actionContext = new ActionContext
+        var metadata = new List<IFilterMetadata>();
+
+        _context = new ActionExecutingContext(
+            actionContext,
+            metadata,
+#if NET6_0_OR_GREATER
+            new Dictionary<string, object?>(),
+#elif NET5_0
+                new Dictionary<string, object>(),
+#endif
+            new Mock<Controller>().Object);
+
+        _next = () => Task.FromResult(new ActionExecutedContext(actionContext, metadata, controller));
+    }
+
+    public static IEnumerable<object[]> TestData
+    {
+        get
+        {
+            yield return new object[]
             {
-                HttpContext = httpContext,
-                RouteData = new RouteData(),
-                ActionDescriptor = new ActionDescriptor(),
+                default(HeaderEntry),
+                new UseRequestCacheControlAttribute.RequestCacheControl()
             };
 
-            var metadata = new List<IFilterMetadata>();
+            yield return new object[]
+            {
+                new HeaderEntry("cache-control", "no-store"),
+                new UseRequestCacheControlAttribute.RequestCacheControl
+                {
+                    HeaderUsed = true,
+                    NoStore = true,
+                    Directives = { "no-store" }
+                }
+            };
 
-            _context = new ActionExecutingContext(
-                actionContext,
-                metadata,
+            yield return new object[]
+            {
+                new HeaderEntry("cache-control", "no-cache,no-store,no-transform,only-if-cached"),
+                new UseRequestCacheControlAttribute.RequestCacheControl
+                {
+                    HeaderUsed = true,
+                    NoStore = true,
+                    NoCache = true,
+                    NoTransform = true,
+                    OnlyIfCached = true,
+                    Directives = { "no-cache", "no-store", "no-transform", "only-if-cached" }
+                }
+            };
+
+            yield return new object[]
+            {
+                new HeaderEntry("cache-control", "max-age=0,min-fresh=60,max-stale=42"),
+                new UseRequestCacheControlAttribute.RequestCacheControl
+                {
+                    HeaderUsed = true,
+                    MaxAge = TimeSpan.Zero,
+                    MinFresh = TimeSpan.FromSeconds(60),
+                    MaxStale = TimeSpan.FromSeconds(42),
+                    Directives = { "max-age=0", "min-fresh=60", "max-stale=42" }
+                }
+            };
+
+            yield return new object[]
+            {
+                new HeaderEntry("cache-control", "max-age = 123"),
+                new UseRequestCacheControlAttribute.RequestCacheControl
+                {
+                    HeaderUsed = true,
+                    MaxAge = TimeSpan.FromSeconds(123),
+                    Directives = { "max-age=123" }
+                }
+            };
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(TestData))]
+    public async Task CacheHeaders_AreParsedCorrectly(HeaderEntry header, IRequestCacheControl expected)
+    {
+        // arrange
+        if (!string.IsNullOrWhiteSpace(header.Name))
+        {
+            _context.HttpContext.Request.Headers.Add(header.Name, header.Value);
+        }
+
+        var attribute = new UseRequestCacheControlAttribute();
+
+        // act
+        await attribute.OnActionExecutionAsync(_context, _next);
+
+        // assert
+        var cacheControl = _context.HttpContext.GetRequestCacheControl();
+        cacheControl.Should().NotBeNull("because we expect to either get an instance or crash");
+        cacheControl.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task MultipleHeaders_AreParsedCorrectly()
+    {
+        // arrange
+        _context.HttpContext.Request.Headers.Add("Pragma", "no-cache");
+        _context.HttpContext.Request.Headers.Add("Cache-Control",
+            new StringValues(new [] {"no-store", "max-age=0"}));
+
+        var attribute = new UseRequestCacheControlAttribute();
+
+        // act
+        await attribute.OnActionExecutionAsync(_context, _next);
+
+        // assert
+        var cacheControl = _context.HttpContext.GetRequestCacheControl();
+        cacheControl.Should().NotBeNull("because we expect to either get an instance or crash");
+
+        cacheControl.HeaderUsed.Should().BeTrue();
+        cacheControl.NoCache.Should().BeTrue();
+        cacheControl.NoStore.Should().BeTrue();
+        cacheControl.MaxAge.Should().Be(TimeSpan.Zero);
+
+        cacheControl.OnlyIfCached.Should().BeFalse();
+        cacheControl.MaxStale.Should().BeNull();
+        cacheControl.MinFresh.Should().BeNull();
+    }
+
+    [Fact]
+    public void GetCacheControl_WhenAttributeIsNotUsed_Throws()
+    {
+        // arrange
+        var httpContext = new DefaultHttpContext();
+        var context = new ActionExecutingContext(
+            new ActionContext(
+                httpContext: httpContext,
+                routeData: new RouteData(),
+                actionDescriptor: new ActionDescriptor(),
+                modelState: new ModelStateDictionary()
+            ),
+            new List<IFilterMetadata>(),
 #if NET6_0_OR_GREATER
-                new Dictionary<string, object?>(),
+            new Dictionary<string, object?>(),
 #elif NET5_0
                 new Dictionary<string, object>(),
 #endif
-                new Mock<Controller>().Object);
+            new Mock<Controller>().Object);
 
-            _next = () => Task.FromResult(new ActionExecutedContext(actionContext, metadata, controller));
-        }
+        // act
+        Action getCacheControl = () => context.HttpContext.GetRequestCacheControl();
 
-        public static IEnumerable<object[]> TestData
+        // assert
+        getCacheControl.Should().Throw<InvalidOperationException>("because the expected attribute was not registered");
+    }
+
+    public readonly struct HeaderEntry
+    {
+        public readonly string Name;
+        public readonly string Value;
+
+        public HeaderEntry(string name, string value)
         {
-            get
-            {
-                yield return new object[]
-                {
-                    default(HeaderEntry),
-                    new UseRequestCacheControlAttribute.RequestCacheControl()
-                };
-
-                yield return new object[]
-                {
-                    new HeaderEntry("cache-control", "no-store"),
-                    new UseRequestCacheControlAttribute.RequestCacheControl
-                    {
-                        HeaderUsed = true,
-                        NoStore = true,
-                        Directives = { "no-store" }
-                    }
-                };
-
-                yield return new object[]
-                {
-                    new HeaderEntry("cache-control", "no-cache,no-store,no-transform,only-if-cached"),
-                    new UseRequestCacheControlAttribute.RequestCacheControl
-                    {
-                        HeaderUsed = true,
-                        NoStore = true,
-                        NoCache = true,
-                        NoTransform = true,
-                        OnlyIfCached = true,
-                        Directives = { "no-cache", "no-store", "no-transform", "only-if-cached" }
-                    }
-                };
-
-                yield return new object[]
-                {
-                    new HeaderEntry("cache-control", "max-age=0,min-fresh=60,max-stale=42"),
-                    new UseRequestCacheControlAttribute.RequestCacheControl
-                    {
-                        HeaderUsed = true,
-                        MaxAge = TimeSpan.Zero,
-                        MinFresh = TimeSpan.FromSeconds(60),
-                        MaxStale = TimeSpan.FromSeconds(42),
-                        Directives = { "max-age=0", "min-fresh=60", "max-stale=42" }
-                    }
-                };
-
-                yield return new object[]
-                {
-                    new HeaderEntry("cache-control", "max-age = 123"),
-                    new UseRequestCacheControlAttribute.RequestCacheControl
-                    {
-                        HeaderUsed = true,
-                        MaxAge = TimeSpan.FromSeconds(123),
-                        Directives = { "max-age=123" }
-                    }
-                };
-            }
+            Name = name;
+            Value = value;
         }
 
-        [Theory]
-        [MemberData(nameof(TestData))]
-        public async Task CacheHeaders_AreParsedCorrectly(HeaderEntry header, IRequestCacheControl expected)
-        {
-            // arrange
-            if (!string.IsNullOrWhiteSpace(header.Name))
-            {
-                _context.HttpContext.Request.Headers.Add(header.Name, header.Value);
-            }
-
-            var attribute = new UseRequestCacheControlAttribute();
-
-            // act
-            await attribute.OnActionExecutionAsync(_context, _next);
-
-            // assert
-            var cacheControl = _context.HttpContext.GetRequestCacheControl();
-            cacheControl.Should().NotBeNull("because we expect to either get an instance or crash");
-            cacheControl.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public async Task MultipleHeaders_AreParsedCorrectly()
-        {
-            // arrange
-            _context.HttpContext.Request.Headers.Add("Pragma", "no-cache");
-            _context.HttpContext.Request.Headers.Add("Cache-Control",
-                new StringValues(new [] {"no-store", "max-age=0"}));
-
-            var attribute = new UseRequestCacheControlAttribute();
-
-            // act
-            await attribute.OnActionExecutionAsync(_context, _next);
-
-            // assert
-            var cacheControl = _context.HttpContext.GetRequestCacheControl();
-            cacheControl.Should().NotBeNull("because we expect to either get an instance or crash");
-
-            cacheControl.HeaderUsed.Should().BeTrue();
-            cacheControl.NoCache.Should().BeTrue();
-            cacheControl.NoStore.Should().BeTrue();
-            cacheControl.MaxAge.Should().Be(TimeSpan.Zero);
-
-            cacheControl.OnlyIfCached.Should().BeFalse();
-            cacheControl.MaxStale.Should().BeNull();
-            cacheControl.MinFresh.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetCacheControl_WhenAttributeIsNotUsed_Throws()
-        {
-            // arrange
-            var httpContext = new DefaultHttpContext();
-            var context = new ActionExecutingContext(
-                new ActionContext(
-                    httpContext: httpContext,
-                    routeData: new RouteData(),
-                    actionDescriptor: new ActionDescriptor(),
-                    modelState: new ModelStateDictionary()
-                ),
-                new List<IFilterMetadata>(),
-#if NET6_0_OR_GREATER
-                new Dictionary<string, object?>(),
-#elif NET5_0
-                new Dictionary<string, object>(),
-#endif
-                new Mock<Controller>().Object);
-
-            // act
-            Action getCacheControl = () => context.HttpContext.GetRequestCacheControl();
-
-            // assert
-            getCacheControl.Should().Throw<InvalidOperationException>("because the expected attribute was not registered");
-        }
-
-        public readonly struct HeaderEntry
-        {
-            public readonly string Name;
-            public readonly string Value;
-
-            public HeaderEntry(string name, string value)
-            {
-                Name = name;
-                Value = value;
-            }
-
-            /// <inheritdoc />
-            public override string ToString() => string.IsNullOrWhiteSpace(Name) ? "(none)" : $"{Name}: {Value}";
-        }
+        /// <inheritdoc />
+        public override string ToString() => string.IsNullOrWhiteSpace(Name) ? "(none)" : $"{Name}: {Value}";
     }
 }
