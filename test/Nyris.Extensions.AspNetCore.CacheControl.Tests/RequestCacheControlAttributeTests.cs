@@ -36,7 +36,7 @@ namespace Nyris.Extensions.AspNetCore.CacheControl.Tests
             _context = new ActionExecutingContext(
                 actionContext,
                 metadata,
-#if NET6_0
+#if NET6_0_OR_GREATER
                 new Dictionary<string, object?>(),
 #elif NET5_0
                 new Dictionary<string, object>(),
@@ -168,7 +168,7 @@ namespace Nyris.Extensions.AspNetCore.CacheControl.Tests
                     modelState: new ModelStateDictionary()
                 ),
                 new List<IFilterMetadata>(),
-#if NET6_0
+#if NET6_0_OR_GREATER
                 new Dictionary<string, object?>(),
 #elif NET5_0
                 new Dictionary<string, object>(),

@@ -114,7 +114,7 @@ namespace Microsoft.AspNetCore.Mvc
             }
 
             directives = values.Value
-                .SelectMany(value => value.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .SelectMany(value => value?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? ArraySegment<string>.Empty)
                 .Where(value => !string.IsNullOrWhiteSpace(value))
                 .Select(directive =>
                     Whitespace.Replace(directive, string.Empty))
