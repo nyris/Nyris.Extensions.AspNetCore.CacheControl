@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 using Nyris.Extensions.AspNetCore.CacheControl;
 
@@ -13,9 +12,9 @@ using Nyris.Extensions.AspNetCore.CacheControl;
 namespace Microsoft.AspNetCore.Mvc;
 
 /// <summary>
-/// Enables interpretation of the <c>Cache-Control</c> request header.
+///     Enables interpretation of the <c>Cache-Control</c> request header.
 /// </summary>
-public sealed class UseRequestCacheControlAttribute : ActionFilterAttribute
+public sealed class UseRequestCacheControlMiddleware
 {
     private static readonly Regex Whitespace = new(@"\s+", RegexOptions.Compiled);
 
@@ -24,14 +23,20 @@ public sealed class UseRequestCacheControlAttribute : ActionFilterAttribute
         RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline |
         RegexOptions.ExplicitCapture);
 
-    /// <inheritdoc />
-    public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    private readonly RequestDelegate _next;
+
+    public UseRequestCacheControlMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public Task InvokeAsync(HttpContext context)
     {
         // TODO: Investigate whether HTTP/2 trailers need to be evaluated as well.
-        var headers = context.HttpContext.Request.Headers;
+        var headers = context.Request.Headers;
 
         var control = new RequestCacheControl();
-        context.HttpContext.Features.Set((ICacheControl) control);
+        context.Features.Set((ICacheControl) control);
 
         if (TryExtractDirectives("pragma", headers, out var directives))
         {
@@ -54,7 +59,7 @@ public sealed class UseRequestCacheControlAttribute : ActionFilterAttribute
             }
         }
 
-        return base.OnActionExecutionAsync(context, next);
+        return _next(context);
     }
 
     private static void TryParsePragmaDirective(string directive, RequestCacheControl control)
