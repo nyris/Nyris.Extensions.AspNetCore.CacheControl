@@ -11,11 +11,11 @@ namespace Microsoft.AspNetCore.Http;
 public static class CacheControlHttpContextExtensions
 {
     /// <summary>
-    /// Gets the <see cref="IRequestCacheControl"/> feature from the <see cref="HttpContext"/>.
+    /// Gets the <see cref="ICacheControl"/> feature from the <see cref="HttpContext"/>.
     /// </summary>
     /// <param name="context">The <see cref="HttpContext"/>.</param>
-    /// <returns>An <see cref="IRequestCacheControl"/> instance.</returns>
-    /// <exception cref="InvalidOperationException">The <see cref="IRequestCacheControl"/> feature was not registered on the <see cref="HttpContext"/>.</exception>
+    /// <returns>An <see cref="ICacheControl"/> instance.</returns>
+    /// <exception cref="InvalidOperationException">The <see cref="ICacheControl"/> feature was not registered on the <see cref="HttpContext"/>.</exception>
     public static ICacheControl GetRequestCacheControl(this HttpContext context)
     {
         var control = context.Features.Get<ICacheControl?>();
@@ -23,7 +23,7 @@ public static class CacheControlHttpContextExtensions
         {
             throw new InvalidOperationException(
                 $"The {nameof(ICacheControl)} feature was not registered. " +
-                $"Make sure the {nameof(UseRequestCacheControlAttribute)} is added to the actions or controllers.");
+                $"Make sure the {nameof(UseRequestCacheControlMiddleware)} is added to the request pipeline.");
         }
         return control;
     }

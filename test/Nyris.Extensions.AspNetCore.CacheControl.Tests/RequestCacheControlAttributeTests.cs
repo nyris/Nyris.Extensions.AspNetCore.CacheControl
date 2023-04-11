@@ -16,34 +16,13 @@ namespace Nyris.Extensions.AspNetCore.CacheControl.Tests;
 
 public sealed class RequestCacheControlAttributeTests
 {
-    private readonly ActionExecutingContext _context;
-    private readonly ActionExecutionDelegate _next;
+    private readonly HttpContext _context;
+    private readonly RequestDelegate _next;
 
     public RequestCacheControlAttributeTests()
     {
-        var controller = new Mock<Controller>().Object;
-        var httpContext = new DefaultHttpContext();
-
-        var actionContext = new ActionContext
-        {
-            HttpContext = httpContext,
-            RouteData = new RouteData(),
-            ActionDescriptor = new ActionDescriptor(),
-        };
-
-        var metadata = new List<IFilterMetadata>();
-
-        _context = new ActionExecutingContext(
-            actionContext,
-            metadata,
-#if NET6_0_OR_GREATER
-            new Dictionary<string, object?>(),
-#elif NET5_0
-                new Dictionary<string, object>(),
-#endif
-            new Mock<Controller>().Object);
-
-        _next = () => Task.FromResult(new ActionExecutedContext(actionContext, metadata, controller));
+        _context = new DefaultHttpContext();
+        _next = static _ => Task.CompletedTask;
     }
 
     public static IEnumerable<object[]> TestData
@@ -53,13 +32,13 @@ public sealed class RequestCacheControlAttributeTests
             yield return new object[]
             {
                 default(HeaderEntry),
-                new UseRequestCacheControlAttribute.RequestCacheControl()
+                new UseRequestCacheControlMiddleware.RequestCacheControl()
             };
 
             yield return new object[]
             {
                 new HeaderEntry("cache-control", "no-store"),
-                new UseRequestCacheControlAttribute.RequestCacheControl
+                new UseRequestCacheControlMiddleware.RequestCacheControl
                 {
                     HeaderUsed = true,
                     NoStore = true,
@@ -70,7 +49,7 @@ public sealed class RequestCacheControlAttributeTests
             yield return new object[]
             {
                 new HeaderEntry("cache-control", "no-cache,no-store,no-transform,only-if-cached"),
-                new UseRequestCacheControlAttribute.RequestCacheControl
+                new UseRequestCacheControlMiddleware.RequestCacheControl
                 {
                     HeaderUsed = true,
                     NoStore = true,
@@ -84,7 +63,7 @@ public sealed class RequestCacheControlAttributeTests
             yield return new object[]
             {
                 new HeaderEntry("cache-control", "max-age=0,min-fresh=60,max-stale=42"),
-                new UseRequestCacheControlAttribute.RequestCacheControl
+                new UseRequestCacheControlMiddleware.RequestCacheControl
                 {
                     HeaderUsed = true,
                     MaxAge = TimeSpan.Zero,
@@ -97,7 +76,7 @@ public sealed class RequestCacheControlAttributeTests
             yield return new object[]
             {
                 new HeaderEntry("cache-control", "max-age = 123"),
-                new UseRequestCacheControlAttribute.RequestCacheControl
+                new UseRequestCacheControlMiddleware.RequestCacheControl
                 {
                     HeaderUsed = true,
                     MaxAge = TimeSpan.FromSeconds(123),
@@ -114,16 +93,16 @@ public sealed class RequestCacheControlAttributeTests
         // arrange
         if (!string.IsNullOrWhiteSpace(header.Name))
         {
-            _context.HttpContext.Request.Headers.Add(header.Name, header.Value);
+            _context.Request.Headers.Add(header.Name, header.Value);
         }
 
-        var attribute = new UseRequestCacheControlAttribute();
+        var attribute = new UseRequestCacheControlMiddleware(_next);
 
         // act
-        await attribute.OnActionExecutionAsync(_context, _next);
+        await attribute.InvokeAsync(_context);
 
         // assert
-        var cacheControl = _context.HttpContext.GetRequestCacheControl();
+        var cacheControl = _context.GetRequestCacheControl();
         cacheControl.Should().NotBeNull("because we expect to either get an instance or crash");
         cacheControl.Should().BeEquivalentTo(expected);
     }
@@ -132,17 +111,17 @@ public sealed class RequestCacheControlAttributeTests
     public async Task MultipleHeaders_AreParsedCorrectly()
     {
         // arrange
-        _context.HttpContext.Request.Headers.Add("Pragma", "no-cache");
-        _context.HttpContext.Request.Headers.Add("Cache-Control",
+        _context.Request.Headers.Add("Pragma", "no-cache");
+        _context.Request.Headers.Add("Cache-Control",
             new StringValues(new [] {"no-store", "max-age=0"}));
 
-        var attribute = new UseRequestCacheControlAttribute();
+        var attribute = new UseRequestCacheControlMiddleware(static _ => Task.CompletedTask);
 
         // act
-        await attribute.OnActionExecutionAsync(_context, _next);
+        await attribute.InvokeAsync(_context);
 
         // assert
-        var cacheControl = _context.HttpContext.GetRequestCacheControl();
+        var cacheControl = _context.GetRequestCacheControl();
         cacheControl.Should().NotBeNull("because we expect to either get an instance or crash");
 
         cacheControl.HeaderUsed.Should().BeTrue();

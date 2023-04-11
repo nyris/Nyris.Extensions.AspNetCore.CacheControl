@@ -8,6 +8,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - The `IRequestCacheControl` interface was renamed to `ICacheControl`.
+- Replaced the `UseRequestCacheControlAttribute` with a `UseRequestCacheControl` middleware.
 
 ### Added
 
