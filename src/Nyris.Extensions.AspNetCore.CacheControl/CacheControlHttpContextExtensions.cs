@@ -16,13 +16,13 @@ public static class CacheControlHttpContextExtensions
     /// <param name="context">The <see cref="HttpContext"/>.</param>
     /// <returns>An <see cref="IRequestCacheControl"/> instance.</returns>
     /// <exception cref="InvalidOperationException">The <see cref="IRequestCacheControl"/> feature was not registered on the <see cref="HttpContext"/>.</exception>
-    public static IRequestCacheControl GetRequestCacheControl(this HttpContext context)
+    public static ICacheControl GetRequestCacheControl(this HttpContext context)
     {
-        var control = context.Features.Get<IRequestCacheControl?>();
+        var control = context.Features.Get<ICacheControl?>();
         if (control == null)
         {
             throw new InvalidOperationException(
-                $"The {nameof(IRequestCacheControl)} feature was not registered. " +
+                $"The {nameof(ICacheControl)} feature was not registered. " +
                 $"Make sure the {nameof(UseRequestCacheControlAttribute)} is added to the actions or controllers.");
         }
         return control;

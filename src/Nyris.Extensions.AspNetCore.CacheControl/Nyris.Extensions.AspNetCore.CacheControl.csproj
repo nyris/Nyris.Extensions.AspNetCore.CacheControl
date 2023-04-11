@@ -1,9 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFrameworks>net7.0;net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <OutputType>Library</OutputType>
         <IsPackable>true</IsPackable>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nyris.Extensions.AspNetCore.CacheControl.Abstractions\Nyris.Extensions.AspNetCore.CacheControl.Abstractions.csproj" />
+    </ItemGroup>
 
 </Project>

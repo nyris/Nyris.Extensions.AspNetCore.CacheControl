@@ -17,9 +17,9 @@ namespace Microsoft.AspNetCore.Mvc;
 /// </summary>
 public sealed class UseRequestCacheControlAttribute : ActionFilterAttribute
 {
-    private static readonly Regex Whitespace = new Regex(@"\s+", RegexOptions.Compiled);
+    private static readonly Regex Whitespace = new(@"\s+", RegexOptions.Compiled);
 
-    private static readonly Regex Durations = new Regex(
+    private static readonly Regex Durations = new(
         @"^\s*(?<name>max-age|max-stale|min-fresh)\s*=\s*(?<seconds>\d+)\s*$",
         RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline |
         RegexOptions.ExplicitCapture);
@@ -31,7 +31,7 @@ public sealed class UseRequestCacheControlAttribute : ActionFilterAttribute
         var headers = context.HttpContext.Request.Headers;
 
         var control = new RequestCacheControl();
-        context.HttpContext.Features.Set((IRequestCacheControl) control);
+        context.HttpContext.Features.Set((ICacheControl) control);
 
         if (TryExtractDirectives("pragma", headers, out var directives))
         {
@@ -114,16 +114,16 @@ public sealed class UseRequestCacheControlAttribute : ActionFilterAttribute
         }
 
         directives = values.Value
-            .SelectMany(value => value?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? ArraySegment<string>.Empty)
-            .Where(value => !string.IsNullOrWhiteSpace(value))
-            .Select(directive =>
+            .SelectMany(static value => value?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? ArraySegment<string>.Empty)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static directive =>
                 Whitespace.Replace(directive, string.Empty))
             .ToHashSet();
         return true;
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    internal sealed class RequestCacheControl : IRequestCacheControl
+    internal sealed class RequestCacheControl : ICacheControl
     {
         /// <inheritdoc />
         public bool HeaderUsed { get; set; }
@@ -155,6 +155,6 @@ public sealed class UseRequestCacheControlAttribute : ActionFilterAttribute
         internal HashSet<string> Directives { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <inheritdoc />
-        IReadOnlyCollection<string> IRequestCacheControl.Directives => Directives;
+        IReadOnlyCollection<string> ICacheControl.Directives => Directives;
     }
 }
