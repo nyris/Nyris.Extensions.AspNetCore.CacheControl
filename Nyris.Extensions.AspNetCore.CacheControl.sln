@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nyris.Extensions.AspNetCore
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nyris.Extensions.AspNetCore.CacheControl.Tests", "test\Nyris.Extensions.AspNetCore.CacheControl.Tests\Nyris.Extensions.AspNetCore.CacheControl.Tests.csproj", "{8F2D484B-604C-449F-ABCC-B380B373E672}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nyris.Extensions.AspNetCore.CacheControl.Abstractions", "src\Nyris.Extensions.AspNetCore.CacheControl.Abstractions\Nyris.Extensions.AspNetCore.CacheControl.Abstractions.csproj", "{DB66298E-0126-4DA1-A7B6-54C6CA7A927A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,10 +38,15 @@ Global
 		{8F2D484B-604C-449F-ABCC-B380B373E672}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F2D484B-604C-449F-ABCC-B380B373E672}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F2D484B-604C-449F-ABCC-B380B373E672}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB66298E-0126-4DA1-A7B6-54C6CA7A927A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB66298E-0126-4DA1-A7B6-54C6CA7A927A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB66298E-0126-4DA1-A7B6-54C6CA7A927A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB66298E-0126-4DA1-A7B6-54C6CA7A927A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{38B61A3E-B117-42E6-BA10-A64D01C54BD7} = {977AE35B-28F9-4EEC-B6D7-D915193A7DA5}
 		{1FCA5AF8-E82E-45AE-BBA5-7D7673C22706} = {E70D390C-B0F7-4BEF-BB8F-858DE8376342}
 		{8F2D484B-604C-449F-ABCC-B380B373E672} = {0B4343B2-BE2F-4D07-9AD2-01F5C835575B}
+		{DB66298E-0126-4DA1-A7B6-54C6CA7A927A} = {E70D390C-B0F7-4BEF-BB8F-858DE8376342}
 	EndGlobalSection
 EndGlobal

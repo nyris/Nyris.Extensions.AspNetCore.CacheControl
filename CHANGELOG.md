@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.4.0 - 2023-04-11
+
+### Changed
+
+- The `IRequestCacheControl` interface was renamed to `ICacheControl`.
+- Replaced the `UseRequestCacheControlAttribute` with a `UseRequestCacheControl` middleware.
+
+### Added
+
+- The `AllowCacheUse` and `AllowCacheUpdate` extension methods were added
+  to simplify the otherwise required negations of `NoCache` and `NoStore`.
+
 ## 0.3.0 - 2022-11-09
 
 ### Added
