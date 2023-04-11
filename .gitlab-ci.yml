@@ -31,6 +31,7 @@ Build:
   script:
     - v2-autobuild
     - v2-test-all net7.0
+    - v2-publish-nuget src/Nyris.Extensions.AspNetCore.CacheControl.Abstractions
     - v2-publish-nuget src/Nyris.Extensions.AspNetCore.CacheControl
 
 Release NuGets:
