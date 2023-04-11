@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.4.2 - 2023-04-11
+
+### Internal
+
+- Fixed the missing deployment of the `Abstractions` package.
+
 ## 0.4.1 - 2023-04-11
 
 ### Added
