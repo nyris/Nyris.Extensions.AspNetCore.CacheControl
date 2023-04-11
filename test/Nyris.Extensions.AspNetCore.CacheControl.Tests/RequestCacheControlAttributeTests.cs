@@ -109,7 +109,7 @@ public sealed class RequestCacheControlAttributeTests
 
     [Theory]
     [MemberData(nameof(TestData))]
-    public async Task CacheHeaders_AreParsedCorrectly(HeaderEntry header, IRequestCacheControl expected)
+    public async Task CacheHeaders_AreParsedCorrectly(HeaderEntry header, ICacheControl expected)
     {
         // arrange
         if (!string.IsNullOrWhiteSpace(header.Name))
@@ -149,6 +149,9 @@ public sealed class RequestCacheControlAttributeTests
         cacheControl.NoCache.Should().BeTrue();
         cacheControl.NoStore.Should().BeTrue();
         cacheControl.MaxAge.Should().Be(TimeSpan.Zero);
+
+        cacheControl.AllowCacheUse().Should().BeFalse();
+        cacheControl.AllowCacheUpdate().Should().BeFalse();
 
         cacheControl.OnlyIfCached.Should().BeFalse();
         cacheControl.MaxStale.Should().BeNull();
