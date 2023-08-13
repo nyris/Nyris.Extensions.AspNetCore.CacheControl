@@ -12,11 +12,7 @@ endorsement or association with nyris GmbH without explicit written permission f
 **Open Source License**: This software library is provided under the terms of the [EUPL-1.2] license.
 By using this software, you agree to comply with the terms of the EUPL-1.2 license.
 
-**Trademark Policy**: For more detailed information about the usage of nyris GmbH's trademarks and corporate identity,
-please refer to our [Trademark Usage Policy].
-
 Please consult with our legal team if you have any questions regarding the use of our trademarks
 in association with this software.
 
 [EUPL-1.2]: LICENSE.md
-[Trademark Usage Policy]: LICENSE.md
