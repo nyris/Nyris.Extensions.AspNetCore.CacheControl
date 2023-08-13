@@ -2,13 +2,14 @@
 <Project>
 
     <PropertyGroup>
-        <RepositoryUrl>https://git.nyris.io/shared/extensions/Nyris.Extensions.AspNetCore.CacheControl.git</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
+        <PackageTags>Extensions;Cache-Control</PackageTags>
+        <PackageProjectUrl>https://git.nyris.io/shared/extensions/Nyris.Extensions.AspNetCore.CacheControl</PackageProjectUrl>
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageTags>Extensions;Cache-Control</PackageTags>
-        <PackageProjectUrl>https://git.nyris.io/shared/extensions/Nyris.Extensions.AspNetCore.CacheControl</PackageProjectUrl>
+        <RepositoryUrl>https://git.nyris.io/shared/extensions/Nyris.Extensions.AspNetCore.CacheControl.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -29,18 +30,26 @@
         -->
     </PropertyGroup>
 
-    <ItemGroup>
+    <!-- CI/CD builds -->
+    <PropertyGroup Condition="'$(CI)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <!-- SourceLink -->
+    <ItemGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
         <PackageReference Include="SourceLink.Embed.AllSourceFiles" Version="2.8.3" PrivateAssets="All" />
     </ItemGroup>
 
+    <!-- Code Analyzers, Linters, ... -->
     <ItemGroup>
         <PackageReference Include="SonarAnalyzer" Version="6.6.0.3969" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>$(AssemblyName).Tests</_Parameter1>
-        </AssemblyAttribute>
+        <InternalsVisibleTo Include="$(AssemblyName).Tests" />
     </ItemGroup>
 
 </Project>
