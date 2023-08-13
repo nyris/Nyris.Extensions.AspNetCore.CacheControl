@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Nyris.Extensions.AspNetCore.CacheControl</RootNamespace>
+        <Authors>Markus Mayer</Authors>
     </PropertyGroup>
 
 </Project>
