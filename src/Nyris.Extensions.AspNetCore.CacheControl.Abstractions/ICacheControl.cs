@@ -10,8 +10,8 @@ public interface ICacheControl
     ///     <c>Pragma</c> request header was present.
     /// </summary>
     /// <remarks>
-    /// If this property evaluates to <see langword="false"/>, all properties of this
-    /// instance will have their default value.
+    ///     If this property evaluates to <see langword="false"/>, all properties of this
+    ///     instance will have their default value.
     /// </remarks>
     bool HeaderUsed { get; }
 
