@@ -3,8 +3,9 @@
     <PropertyGroup>
         <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <Description>
-            Provides the extensions method for accessing the HTTP/1.1 Cache-Control and HTTP/1.0 Pragma header directives.
+            Provides extension methods for accessing HTTP/1.1 Cache-Control and HTTP/1.0 Pragma header directives.
         </Description>
+        <Authors>Markus Mayer</Authors>
         <OutputType>Library</OutputType>
         <IsPackable>true</IsPackable>
     </PropertyGroup>

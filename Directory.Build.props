@@ -1,15 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project>
-
     <PropertyGroup>
+        <Company>Nyris GmbH</Company>
         <PackageTags>Extensions;Cache-Control</PackageTags>
+        <PackageLicenseExpression>EUPL-1.2</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>logo.png</PackageIcon>
+        <PublishRelease>true</PublishRelease>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <!-- See GitHub specific overrides below -->
         <PackageProjectUrl>https://git.nyris.io/shared/extensions/Nyris.Extensions.AspNetCore.CacheControl</PackageProjectUrl>
     </PropertyGroup>
 
     <PropertyGroup>
-        <RepositoryUrl>https://git.nyris.io/shared/extensions/Nyris.Extensions.AspNetCore.CacheControl.git</RepositoryUrl>
+        <!-- See GitHub specific overrides below -->
+        <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -22,6 +28,37 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <!-- CI/CD builds -->
+    <PropertyGroup Condition="'$(CI)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <!-- Internal builds (i.e., not on GitHub) -->
+    <ItemGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
+        <PackageReference Include="SourceLink.Embed.AllSourceFiles" Version="[2.8.3,3.0.0)" PrivateAssets="All" />
+    </ItemGroup>
+
+    <!-- GitHub -->
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <PackageProjectUrl>https://github.com/nyris/Nyris.Extensions.AspNetCore.CacheControl</PackageProjectUrl>
+        <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="[1.1.1,2.0.0)" PrivateAssets="All" />
+        <!-- <PackageReference Include="GitVersion.MsBuild" Version="[5.12.0,6.0.0)" PrivateAssets="All" /> -->
+    </ItemGroup>
+
+    <PropertyGroup>
+        <SolutionDir Condition="'$(SolutionDir)'==''">$(MSBuildThisFileDirectory)</SolutionDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(SolutionDir)\README.md" Pack="true" Visible="false" PackagePath="" />
+        <None Include="$(SolutionDir)\LICENSE.md" Pack="true" Visible="false" PackagePath="" />
+        <None Include="$(SolutionDir)\TRADEMARKS.md" Pack="true" Visible="false" PackagePath="" />
+        <None Include="$(SolutionDir)\nuget\logo.png" Pack="true" Visible="false" PackagePath="" />
+    </ItemGroup>
+
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <!--
@@ -29,19 +66,6 @@
         <WarningsNotAsErrors>$(WarningsNotAsErrors);...</WarningsNotAsErrors>
         -->
     </PropertyGroup>
-
-    <!-- CI/CD builds -->
-    <PropertyGroup Condition="'$(CI)' == 'true'">
-        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    </PropertyGroup>
-
-    <!-- SourceLink -->
-    <ItemGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
-        <PackageReference Include="SourceLink.Embed.AllSourceFiles" Version="2.8.3" PrivateAssets="All" />
-    </ItemGroup>
 
     <!-- Code Analyzers, Linters, ... -->
     <ItemGroup>
@@ -51,5 +75,4 @@
     <ItemGroup>
         <InternalsVisibleTo Include="$(AssemblyName).Tests" />
     </ItemGroup>
-
 </Project>

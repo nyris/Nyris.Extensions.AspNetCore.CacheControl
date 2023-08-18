@@ -8,6 +8,8 @@ ProjectSection(SolutionItems) = preProject
 	CHANGELOG.md = CHANGELOG.md
 	README.md = README.md
 	GitVersion.yml = GitVersion.yml
+	TRADEMARKS.md = TRADEMARKS.md
+	LICENSE.md = LICENSE.md
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".dotfiles", ".dotfiles", "{38B61A3E-B117-42E6-BA10-A64D01C54BD7}"
